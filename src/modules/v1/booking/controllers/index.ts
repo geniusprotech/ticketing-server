@@ -1,0 +1,62 @@
+import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
+import { bookingService } from '../services';
+import { BookTicketDTO } from '../models';
+
+export function bookingController(fastify: FastifyInstance) {
+    const service = bookingService(fastify);
+
+    const bookSeats = async (req: FastifyRequest, res: FastifyReply) => {
+        const body = req.body as BookTicketDTO;
+
+        try {
+            const events = await service.bookSeat(body);
+
+            res.success(200, events, 'Book seat successfully!');
+        } catch(err: any) {
+            res.error(err.message, err?.code || 500);
+        }
+    }
+
+    const getBookingPublicList = async (req: FastifyRequest, res: FastifyReply) => {
+        try {
+            const events = await service.getBookingPublicList(req.user.id);
+
+            res.success(200, events, 'Retrieved booking list successfully!');
+        } catch(err: any) {
+            res.error(err.message, err?.code || 500);
+        }
+    }
+
+    const updateTransferReceipt = async (req: FastifyRequest<{ Params: { id: string }}>, res: FastifyReply) => {
+        const body = req.body as { receiptUrl: string };
+        const id = req.params.id;
+
+        try {
+            const events = await service.updateTransferBooking(req.user.id, id, body.receiptUrl);
+
+            res.success(200, events, 'Retrieved booking list successfully!');
+        } catch(err: any) {
+            res.error(err.message, err?.code || 500);
+        }
+    }
+
+    const updateBookingStatus = async (req: FastifyRequest<{ Params: { id: string }}>, res: FastifyReply) => {
+        const body = req.body as { status: string };
+        const id = req.params.id;
+
+        try {
+            const events = await service.updateBookingStatus(id, body.status, req.user.role);
+
+            res.success(200, events, 'Update booking status successfully!');
+        } catch(err: any) {
+            res.error(err.message, err?.code || 500);
+        }
+    }
+
+    return {
+        bookSeats,
+        updateBookingStatus,
+        updateTransferReceipt,
+        getBookingPublicList,
+    }
+}

@@ -1,0 +1,27 @@
+{
+  "jsc": {
+    "parser": {
+      "syntax": "typescript",
+      "tsx": false,
+      "decorators": true,
+      "dynamicImport": true
+    },
+    "transform": {
+      "decoratorMetadata": true
+    },
+    "target": "es2021",
+    "paths": {
+      "@/*": ["./src/*"],
+      "@modules/*": ["./src/modules/*"],
+      "@utils/*": ["./src/utils/*"],
+      "@plugins/*": ["./src/plugins/*"]
+    },
+    "keepClassNames": true,
+    "loose": true,
+    "baseUrl": "./src"
+  },
+  "module": {
+    "type": "commonjs"
+  },
+  "sourceMaps": true
+}

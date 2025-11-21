@@ -1,0 +1,116 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum SeatStatus {
+  AVAILABLE
+  PENDING // user sedang reserve, menunggu admin approve
+  BOOKED // sudah resmi dibooking admin
+}
+
+enum BookingStatus {
+  PENDING // user reserve, menunggu admin approve
+  APPROVED
+  REJECTED
+}
+
+model User {
+  id       String    @id @default(cuid())
+  email    String    @unique
+  name     String
+  password String?
+  phone    String?
+  role     String    @default("MEMBER")
+  bookings Booking[]
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@index([id, email])
+  @@map("users")
+}
+
+model Event {
+  id       String    @id @default(cuid())
+  title    String
+  date     DateTime
+  location String
+  slug     String
+  price    Float
+  bookings Booking[]
+  seats    Seat[]
+
+  createdAt DateTime  @default(now()) @map("created_at")
+  updatedAt DateTime  @updatedAt @map("updated_at")
+  deletedAt DateTime? @map("deleted_at")
+
+  @@index([id, title])
+  @@map("events")
+}
+
+model Seat {
+  id           String     @id @default(cuid())
+  eventId      String
+  event        Event      @relation(fields: [eventId], references: [id])
+  seatNumber   String // contoh: A1, B2, C5
+  rowNumber    Int?
+  columnNumber Int?
+  status       SeatStatus @default(AVAILABLE)
+  lockedBy     String? // user id yang sedang lock
+  lockedAt     DateTime?
+  bookingId    String?
+  booking      Booking?   @relation(fields: [bookingId], references: [id])
+  ticket       Ticket?
+  
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([eventId, seatNumber])
+  @@index([id, eventId, seatNumber])
+  @@map("seats")
+}
+
+model Booking {
+  id              String        @id @default(cuid())
+  code            String?
+  eventId         String
+  event           Event         @relation(fields: [eventId], references: [id])
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
+  seatIds         String[]
+  transferReceipt String?       @map("transfer_receipt")
+  status          BookingStatus @default(PENDING)
+  seats           Seat[]
+  tickets         Ticket[]
+
+  createdAt  DateTime  @default(now()) @map("created_at")
+  updatedAt  DateTime  @updatedAt @map("updated_at")
+  approvedAt DateTime? @map("approved_at")
+  rejectedAt DateTime? @map("rejected_at")
+
+  @@index([id, eventId, userId, status])
+  @@map("bookings")
+}
+
+model Ticket {
+  id         String   @id @default(cuid())
+  bookingId  String?
+  booking    Booking? @relation(fields: [bookingId], references: [id])
+  seatId     String
+  seat       Seat     @relation(fields: [seatId], references: [id])
+  ticketFile String   @map("ticket_file")
+
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  @@unique([seatId])
+  @@index([id, bookingId, seatId])
+  @@map("tickets")
+}
