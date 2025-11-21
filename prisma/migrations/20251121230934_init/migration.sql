@@ -37,14 +37,14 @@ CREATE TABLE "events" (
 -- CreateTable
 CREATE TABLE "seats" (
     "id" TEXT NOT NULL,
-    "eventId" TEXT NOT NULL,
-    "seatNumber" TEXT NOT NULL,
-    "rowNumber" INTEGER,
-    "columnNumber" INTEGER,
+    "event_id" TEXT NOT NULL,
+    "seat_number" TEXT NOT NULL,
+    "row_number" INTEGER,
+    "column_number" INTEGER,
     "status" "SeatStatus" NOT NULL DEFAULT 'AVAILABLE',
-    "lockedBy" TEXT,
-    "lockedAt" TIMESTAMP(3),
-    "bookingId" TEXT,
+    "locked_by" TEXT,
+    "locked_at" TIMESTAMP(3),
+    "booking_id" TEXT,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
 
@@ -55,9 +55,9 @@ CREATE TABLE "seats" (
 CREATE TABLE "bookings" (
     "id" TEXT NOT NULL,
     "code" TEXT,
-    "eventId" TEXT NOT NULL,
-    "userId" TEXT NOT NULL,
-    "seatIds" TEXT[],
+    "event_id" TEXT NOT NULL,
+    "user_id" TEXT NOT NULL,
+    "seat_ids" TEXT[],
     "transfer_receipt" TEXT,
     "status" "BookingStatus" NOT NULL DEFAULT 'PENDING',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
@@ -71,8 +71,8 @@ CREATE TABLE "bookings" (
 -- CreateTable
 CREATE TABLE "tickets" (
     "id" TEXT NOT NULL,
-    "bookingId" TEXT,
-    "seatId" TEXT NOT NULL,
+    "booking_id" TEXT,
+    "seat_id" TEXT NOT NULL,
     "ticket_file" TEXT NOT NULL,
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,
@@ -90,34 +90,34 @@ CREATE INDEX "users_id_email_idx" ON "users"("id", "email");
 CREATE INDEX "events_id_title_idx" ON "events"("id", "title");
 
 -- CreateIndex
-CREATE INDEX "seats_id_eventId_seatNumber_idx" ON "seats"("id", "eventId", "seatNumber");
+CREATE INDEX "seats_id_event_id_seat_number_idx" ON "seats"("id", "event_id", "seat_number");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "seats_eventId_seatNumber_key" ON "seats"("eventId", "seatNumber");
+CREATE UNIQUE INDEX "seats_event_id_seat_number_key" ON "seats"("event_id", "seat_number");
 
 -- CreateIndex
-CREATE INDEX "bookings_id_eventId_userId_status_idx" ON "bookings"("id", "eventId", "userId", "status");
+CREATE INDEX "bookings_id_event_id_user_id_status_idx" ON "bookings"("id", "event_id", "user_id", "status");
 
 -- CreateIndex
-CREATE INDEX "tickets_id_bookingId_seatId_idx" ON "tickets"("id", "bookingId", "seatId");
+CREATE INDEX "tickets_id_booking_id_seat_id_idx" ON "tickets"("id", "booking_id", "seat_id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "tickets_seatId_key" ON "tickets"("seatId");
+CREATE UNIQUE INDEX "tickets_seat_id_key" ON "tickets"("seat_id");
 
 -- AddForeignKey
-ALTER TABLE "seats" ADD CONSTRAINT "seats_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "events"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "seats" ADD CONSTRAINT "seats_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "events"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "seats" ADD CONSTRAINT "seats_bookingId_fkey" FOREIGN KEY ("bookingId") REFERENCES "bookings"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "seats" ADD CONSTRAINT "seats_booking_id_fkey" FOREIGN KEY ("booking_id") REFERENCES "bookings"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "bookings" ADD CONSTRAINT "bookings_eventId_fkey" FOREIGN KEY ("eventId") REFERENCES "events"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "bookings" ADD CONSTRAINT "bookings_event_id_fkey" FOREIGN KEY ("event_id") REFERENCES "events"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "bookings" ADD CONSTRAINT "bookings_userId_fkey" FOREIGN KEY ("userId") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "bookings" ADD CONSTRAINT "bookings_user_id_fkey" FOREIGN KEY ("user_id") REFERENCES "users"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tickets" ADD CONSTRAINT "tickets_bookingId_fkey" FOREIGN KEY ("bookingId") REFERENCES "bookings"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+ALTER TABLE "tickets" ADD CONSTRAINT "tickets_booking_id_fkey" FOREIGN KEY ("booking_id") REFERENCES "bookings"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "tickets" ADD CONSTRAINT "tickets_seatId_fkey" FOREIGN KEY ("seatId") REFERENCES "seats"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "tickets" ADD CONSTRAINT "tickets_seat_id_fkey" FOREIGN KEY ("seat_id") REFERENCES "seats"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

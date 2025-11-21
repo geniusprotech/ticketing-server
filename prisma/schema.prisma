@@ -56,15 +56,15 @@ model Event {
 
 model Seat {
   id           String     @id @default(cuid())
-  eventId      String
+  eventId      String     @map("event_id")
   event        Event      @relation(fields: [eventId], references: [id])
-  seatNumber   String // contoh: A1, B2, C5
-  rowNumber    Int?
-  columnNumber Int?
+  seatNumber   String     @map("seat_number")
+  rowNumber    Int?       @map("row_number")
+  columnNumber Int?       @map("column_number")
   status       SeatStatus @default(AVAILABLE)
-  lockedBy     String? // user id yang sedang lock
-  lockedAt     DateTime?
-  bookingId    String?
+  lockedBy     String?    @map("locked_by")
+  lockedAt     DateTime?  @map("locked_at")
+  bookingId    String?    @map("booking_id")
   booking      Booking?   @relation(fields: [bookingId], references: [id])
   ticket       Ticket?
   
@@ -80,11 +80,11 @@ model Seat {
 model Booking {
   id              String        @id @default(cuid())
   code            String?
-  eventId         String
+  eventId         String        @map("event_id")
   event           Event         @relation(fields: [eventId], references: [id])
-  userId          String
+  userId          String        @map("user_id")
   user            User          @relation(fields: [userId], references: [id])
-  seatIds         String[]
+  seatIds         String[]      @map("seat_ids")
   transferReceipt String?       @map("transfer_receipt")
   status          BookingStatus @default(PENDING)
   seats           Seat[]
@@ -101,9 +101,9 @@ model Booking {
 
 model Ticket {
   id         String   @id @default(cuid())
-  bookingId  String?
+  bookingId  String?  @map("booking_id")
   booking    Booking? @relation(fields: [bookingId], references: [id])
-  seatId     String
+  seatId     String   @map("seat_id")
   seat       Seat     @relation(fields: [seatId], references: [id])
   ticketFile String   @map("ticket_file")
 
