@@ -1,6 +1,6 @@
 import { FastifyInstance, FastifyRequest, FastifyReply } from 'fastify';
 import { bookingService } from '../services';
-import { BookTicketDTO } from '../models';
+import { BookTicketDTO, GetBookingListDTO } from '../models';
 
 export function bookingController(fastify: FastifyInstance) {
     const service = bookingService(fastify);
@@ -53,10 +53,39 @@ export function bookingController(fastify: FastifyInstance) {
         }
     }
 
+    const getListBooking = async (req: FastifyRequest, res: FastifyReply) => {
+        const query = req.query as GetBookingListDTO;
+
+        try {
+            const events = await service.getListBooking({
+                ...query,
+                role: req.user.role,
+            });
+
+            res.success(200, events, 'Get bookings successfully!');
+        } catch(err: any) {
+            res.error(err.message, err?.code || 500);
+        }
+    }
+
+    const updateExportedBooking = async (req: FastifyRequest, res: FastifyReply) => {
+        const body = req.body as { ids: string[] }
+        
+        try {
+            const events = await service.updateExportedEvidence(body.ids, req.user.role);
+
+            res.success(200, events, 'Get bookings successfully!');
+        } catch(err: any) {
+            res.error(err.message, err?.code || 500);
+        }
+    }
+
     return {
         bookSeats,
         updateBookingStatus,
         updateTransferReceipt,
         getBookingPublicList,
+        getListBooking,
+        updateExportedBooking,
     }
 }

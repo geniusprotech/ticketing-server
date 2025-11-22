@@ -23,7 +23,20 @@ export function authenticationController(fastify: FastifyInstance) {
         }
     }
 
+    const logout = async (req: FastifyRequest, res: FastifyReply) => {
+        try {
+            res
+                .clearCookie("access_token", {
+                    path: "/",
+                })
+                .success(200, null, 'Success logout!');
+        } catch (err: any) {
+            res.error(err.message, err?.code || 500);
+        }
+    }
+
     return {
         login,
+        logout,
     }
 }

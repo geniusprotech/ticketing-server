@@ -1,6 +1,7 @@
 import { FastifyInstance } from "fastify"
-import { BookTicketDTO } from "../models";
+import { BookTicketDTO, GetBookingListDTO } from "../models";
 import { BookingStatus, SeatStatus } from "@prisma/client";
+import { paginate } from "@/utils";
 
 export function bookingService(fastify: FastifyInstance) {
     const reserveSeats = async (prismaClient: any, userId: string, eventId: string, seatNumbers: any[]) => {
@@ -99,14 +100,14 @@ export function bookingService(fastify: FastifyInstance) {
 
             fastify.mailer.sendTemplate(
                 'ticketPurchase',
-                { 
+                {
                     eventName: existEvent?.title,
                     name: exist?.name ? exist?.name : req.name,
                     seatId: req.seats.toString(),
-                    bookingUrl: `${fastify.config.BASE_URL}/events/booking`, 
-                    payment: { 
-                        bankName: 'BCA', 
-                        accountName: 'YAY YOHANES JAKARTA', 
+                    bookingUrl: `${fastify.config.BASE_URL}/events/booking`,
+                    payment: {
+                        bankName: 'BCA',
+                        accountName: 'YAY YOHANES JAKARTA',
                         accountNumber: '3703009804'
                     },
                     supports: {
@@ -114,7 +115,7 @@ export function bookingService(fastify: FastifyInstance) {
                         email: 'claudiagustarini@saintjohn.sch.id',
                         linkedInUrl: fastify.config.URL_LINKEDIN,
                         instagramUrl: fastify.config.URL_IG,
-                    } 
+                    }
                 },
                 {
                     from: "no-reply@geniusprotech.com",
@@ -221,7 +222,7 @@ export function bookingService(fastify: FastifyInstance) {
 
             await fastify.prisma.booking.update({
                 where: { id: bookingId },
-                data: { 
+                data: {
                     status: bookStatus,
                     approvedAt: bookStatus === BookingStatus.APPROVED ? new Date() : null,
                     rejectedAt: bookStatus === BookingStatus.REJECTED ? new Date() : null,
@@ -252,7 +253,7 @@ export function bookingService(fastify: FastifyInstance) {
 
                 fastify.mailer.sendTemplate(
                     'paymentConfirmed',
-                    { 
+                    {
                         eventName: exist?.event?.title,
                         name: exist?.user?.name,
                         tickets: exist.seats.map((seat: any) => ({
@@ -264,7 +265,7 @@ export function bookingService(fastify: FastifyInstance) {
                             email: 'claudiagustarini@saintjohn.sch.id',
                             linkedInUrl: fastify.config.URL_LINKEDIN,
                             instagramUrl: fastify.config.URL_IG,
-                        } 
+                        }
                     },
                     {
                         from: "no-reply@geniusprotech.com",
@@ -273,7 +274,7 @@ export function bookingService(fastify: FastifyInstance) {
                     });
             } else {
                 // If Booking Rejected, open seat for sale
-                for(const seat of exist.seats) {
+                for (const seat of exist.seats) {
                     await fastify.prisma.seat.updateMany({
                         where: {
                             id: seat.id,
@@ -289,7 +290,7 @@ export function bookingService(fastify: FastifyInstance) {
 
                 fastify.mailer.sendTemplate(
                     'bookingRejected',
-                    { 
+                    {
                         eventName: exist?.event?.title,
                         name: exist?.user?.name,
                         seats: exist.seats.map((seat: any) => seat.seatNumber),
@@ -298,7 +299,7 @@ export function bookingService(fastify: FastifyInstance) {
                             email: 'claudiagustarini@saintjohn.sch.id',
                             linkedInUrl: fastify.config.URL_LINKEDIN,
                             instagramUrl: fastify.config.URL_IG,
-                        } 
+                        }
                     },
                     {
                         from: "no-reply@geniusprotech.com",
@@ -311,10 +312,70 @@ export function bookingService(fastify: FastifyInstance) {
         }
     }
 
+    const getListBooking = async (req: GetBookingListDTO & { role: string }) => {
+        
+        try {
+            if(req.role !== 'admin') throw({ statusCode: 403, mesage: 'Not Authorized! '});
+
+            const filter: any = {
+                code: {
+                    contains: req.keyword || undefined,
+                    mode: 'insensitive',
+                },
+                status: req.status === 'PENDING' ? BookingStatus.PENDING : req.status === 'APPROVED' ? BookingStatus.APPROVED : req.status === 'REJECTED' ? BookingStatus.REJECTED : undefined,
+                exported: req.exported === '1' ? true : req.exported === '0' ? false : undefined,
+            }
+
+            const bookings = await fastify.prisma.booking.findMany({
+                where: filter,
+                include: {
+                    event: true,
+                    user: true,
+                    seats: true,
+                },
+                orderBy: {
+                    createdAt: 'desc'
+                },
+                skip: req.limit * (req.currentPage - 1),
+                take: req.limit,
+            });
+
+            const total = await fastify.prisma.booking.count({
+                where: filter,
+            });
+
+            const pagination = paginate(req.currentPage, req.limit, total);
+
+            return {
+                data: bookings,
+                pagination: pagination
+            };
+        } catch (error: any) {
+            throw (await fastify.errorValidation.validationError(error));
+        }
+    }
+
+    const updateExportedEvidence = (bookingIds: string[], role: string) => {
+        if(role !== 'admin') throw({ statusCode: 403, mesage: 'Not Authorized! '});
+
+        return fastify.prisma.booking.updateMany({
+            where: {
+                id: {
+                    in: bookingIds,
+                }
+            },
+            data: {
+                exported: true,
+            }
+        });
+    }
+
     return {
         bookSeat,
         updateTransferBooking,
         getBookingPublicList,
         updateBookingStatus,
+        getListBooking,
+        updateExportedEvidence,
     }
 }

@@ -82,3 +82,49 @@ export class GenerateZodType {
         return z.enum(enumObject, { message: `Invalid enum value. Expected ${Object.values(enumObject).join(' | ')}` })
     }
 }
+
+export const generatePaginationSchema = () => {
+    return z.object({
+        limit: z.coerce.number({ message: 'limit should be number' }).min(1).optional().default(100),
+        currentPage: z.coerce.number({ message: 'currentPage should be number' }).min(1).optional().default(1),
+    })
+}
+
+
+type PaginationResult = {
+    currentPage: number;
+    limit: number;
+    totalData: number;
+    totalPage: number;
+    nextPage: number | null;
+    previousPage: number | null;
+};
+
+/**
+ * Generate pagination info
+ * @param currentPage current page number (1-based)
+ * @param limit items per page
+ * @param totalData total number of items
+ */
+export function paginate(
+    currentPage: number,
+    limit: number,
+    totalData: number
+): PaginationResult {
+    const totalPage = Math.ceil(totalData / limit);
+
+    const nextPage =
+        currentPage < totalPage ? currentPage + 1 : null;
+
+    const previousPage =
+        currentPage > 1 ? currentPage - 1 : null;
+
+    return {
+        currentPage,
+        limit,
+        totalData,
+        totalPage,
+        nextPage,
+        previousPage,
+    };
+}
