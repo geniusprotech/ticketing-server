@@ -18,7 +18,6 @@ RUN npm ci
 COPY prisma ./prisma/
 
 # Generate Prisma Client
-RUN npx prisma migrate deploy
 RUN npx prisma generate
 
 # Copy seluruh source code
