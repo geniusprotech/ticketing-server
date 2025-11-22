@@ -274,8 +274,7 @@ export const emailTemplates = {
                     </div>
     
                     <div style="margin-top:14px; font-size:12px;">
-                        © ${new Date().getFullYear()} Event Organizer. All rights reserved.<br>
-                        Support Phone: ${supports.phone}
+                        © ${new Date().getFullYear()} Genius Project Technology. All rights reserved.<br>
                     </div>
     
                 </td>
@@ -396,8 +395,7 @@ export const emailTemplates = {
                     </div>
     
                     <div style="margin-top:14px; font-size:12px;">
-                        © ${new Date().getFullYear()} Event Organizer. All rights reserved.<br>
-                        Support Phone: ${supports.phone}
+                        © ${new Date().getFullYear()} Genius Project Technology. All rights reserved.<br>
                     </div>
     
                 </td>
