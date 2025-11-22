@@ -30,7 +30,7 @@ async function main() {
     const event = await prisma.event.create({
         data: {
             title: 'Nusantara Berdendang',
-            date: moment('2025-12-06T09:00:00').toISOString(),
+            date: moment('2025-12-06T02:00:00').toISOString(),
             location: 'Saint John School Green Lake, Function Hall 5th Floor',
             slug: 'nusantara-berdendang',
             price: 20000
