@@ -45,7 +45,7 @@ async function main() {
     const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
     const seatsData = [];
-    const ticketImage = "https://assets.genmedik.com/tix/tickets";
+    const ticketImage = process.env.ASSET_URL;
 
     for (let row = 0; row < rows; row++) {
         const rowLabel = alphabet[row];
