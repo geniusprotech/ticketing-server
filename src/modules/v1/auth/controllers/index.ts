@@ -15,7 +15,7 @@ export function authenticationController(fastify: FastifyInstance) {
                     secure: fastify.config.NODE_ENV === 'development' ? false : true,
                     sameSite: "lax", // atau "none" tapi harus dengan secure: true
                     path: "/",
-                    domain: fastify.config.NODE_ENV === 'development' ? "" : fastify.config.ORIGIN_ALLOWED,
+                    domain: fastify.config.NODE_ENV === 'development' ? "" : "",
                     maxAge: 60 * 60 * 24 // 1 hari dalam detik
                 })
                 .success(200, null, 'Success login!');
