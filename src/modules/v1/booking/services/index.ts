@@ -104,12 +104,12 @@ export function bookingService(fastify: FastifyInstance) {
                     bookingUrl: `${fastify.config.BASE_URL}/events/booking`, 
                     payment: { 
                         bankName: 'BCA', 
-                        accountName: 'Saint John School', 
-                        accountNumber: '567823412'
+                        accountName: 'YAY YOHANES JAKARTA', 
+                        accountNumber: '3703009804'
                     },
                     supports: {
-                        phone: '+6281238457123',
-                        email: 'caca@sjs.edu.id',
+                        phone: '+62 822 2920 7974 / +62 812 1177 9742',
+                        email: 'claudiagustarini@saintjohn.sch.id',
                         linkedInUrl: fastify.config.URL_LINKEDIN,
                         instagramUrl: fastify.config.URL_IG,
                     } 
@@ -159,6 +159,7 @@ export function bookingService(fastify: FastifyInstance) {
                             date: true,
                             location: true,
                             price: true,
+                            slug: true,
                         }
                     },
                     seatIds: true,
@@ -255,8 +256,8 @@ export function bookingService(fastify: FastifyInstance) {
                             ticketUrl: seat.ticket.ticketFile,
                         })),
                         supports: {
-                            phone: '+6281238457123',
-                            email: 'caca@sjs.edu.id',
+                            phone: '+62 822 2920 7974 / +62 812 1177 9742',
+                            email: 'claudiagustarini@saintjohn.sch.id',
                             linkedInUrl: fastify.config.URL_LINKEDIN,
                             instagramUrl: fastify.config.URL_IG,
                         } 
@@ -288,8 +289,8 @@ export function bookingService(fastify: FastifyInstance) {
                         name: exist?.user?.name,
                         seats: exist.seats.map((seat: any) => seat.seatNumber),
                         supports: {
-                            phone: '+6281238457123',
-                            email: 'caca@sjs.edu.id',
+                            phone: '+62 822 2920 7974 / +62 812 1177 9742',
+                            email: 'claudiagustarini@saintjohn.sch.id',
                             linkedInUrl: fastify.config.URL_LINKEDIN,
                             instagramUrl: fastify.config.URL_IG,
                         } 
