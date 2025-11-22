@@ -18,7 +18,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "NODE_ENV=development node -r @swc-node/register src/server.ts",
     "build": "swc src -d dist --source-maps",
-    "start": "NODE_ENV=production node dist/server.js",
+    "start": "NODE_ENV=production node dist/src/server.js",
     "migrate-deploy": "npx prisma migrate deploy && npx prisma generate",
     "seed-init": "node prisma/seeders/seed.js"
   },
