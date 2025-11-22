@@ -65,6 +65,7 @@ export function bookingService(fastify: FastifyInstance) {
                 where: { slug: req.slugEvent },
                 select: {
                     id: true,
+                    title: true,
                 }
             });
 
@@ -99,6 +100,7 @@ export function bookingService(fastify: FastifyInstance) {
             fastify.mailer.sendTemplate(
                 'ticketPurchase',
                 { 
+                    eventName: existEvent?.title,
                     name: exist?.name ? exist?.name : req.name,
                     seatId: req.seats.toString(),
                     bookingUrl: `${fastify.config.BASE_URL}/events/booking`, 
@@ -206,6 +208,7 @@ export function bookingService(fastify: FastifyInstance) {
                             ticket: true
                         }
                     },
+                    event: true,
                     user: true,
                 }
             });
@@ -250,6 +253,7 @@ export function bookingService(fastify: FastifyInstance) {
                 fastify.mailer.sendTemplate(
                     'paymentConfirmed',
                     { 
+                        eventName: exist?.event?.title,
                         name: exist?.user?.name,
                         tickets: exist.seats.map((seat: any) => ({
                             seatId: seat.seatNumber,
@@ -286,6 +290,7 @@ export function bookingService(fastify: FastifyInstance) {
                 fastify.mailer.sendTemplate(
                     'bookingRejected',
                     { 
+                        eventName: exist?.event?.title,
                         name: exist?.user?.name,
                         seats: exist.seats.map((seat: any) => seat.seatNumber),
                         supports: {

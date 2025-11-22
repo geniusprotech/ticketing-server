@@ -1,14 +1,14 @@
 {
-  "name": "main-server-genmedik",
+  "name": "ticketing-server",
   "version": "1.0.0",
-  "description": "Genmedik Main Core",
-  "homepage": "https://github.com/GeniusDigitalProject/main-server-genmedik#readme",
+  "description": "Ticketing Server",
+  "homepage": "https://github.com/geniusprotech/ticketing-server#readme",
   "bugs": {
-    "url": "https://github.com/GeniusDigitalProject/main-server-genmedik/issues"
+    "url": "https://github.com/geniusprotech/ticketing-server/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/GeniusDigitalProject/main-server-genmedik.git"
+    "url": "git+https://github.com/geniusprotech/ticketing-server.git"
   },
   "license": "ISC",
   "author": "Genius Kreatif Teknologi",

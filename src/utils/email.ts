@@ -1,12 +1,14 @@
 export const emailTemplates = {
     ticketPurchase: ({
         name,
+        eventName,
         seatId,
         bookingUrl,
         payment: { bankName, accountName, accountNumber },
         supports
     }: {
         name: string;
+        eventName: string;
         seatId: string;
         bookingUrl: string;
         payment: { bankName: string; accountName: string; accountNumber: string };
@@ -74,7 +76,7 @@ export const emailTemplates = {
       
               <tr>
                   <td class="content">
-      
+                  <h1 style="text-align: center;">${eventName}</h1>
                   <h1>Thank You for Your Ticket Purchase 🎉</h1>
       
                   <p>Hello <strong>${name}</strong>,</p>
@@ -147,10 +149,12 @@ export const emailTemplates = {
       </html>
       `,
     paymentConfirmed: ({
+        eventName,
         name,
         tickets,
         supports
     }: {
+        eventName: string;
         name: string;
         tickets: { seatId: string; ticketUrl: string }[];
         supports: { linkedInUrl: string; instagramUrl: string; email: string; phone: string };
@@ -219,7 +223,7 @@ export const emailTemplates = {
             <!-- Content -->
             <tr>
                 <td class="content">
-    
+                    <h1 style="text-align: center;">${eventName}</h1>
                     <h1>Your Payment Has Been Verified 🎉</h1>
     
                     <p>Hello <strong>${name}</strong>,</p>
@@ -283,10 +287,12 @@ export const emailTemplates = {
     </html>
     `,
     bookingRejected: ({
+        eventName,
         name,
         seats,
         supports
     }: {
+        eventName: string;
         name: string;
         seats: string[]; // contoh: ["A10", "A11"]
         supports: { linkedInUrl: string; instagramUrl: string; email: string; phone: string };
@@ -346,7 +352,7 @@ export const emailTemplates = {
             <!-- Content -->
             <tr>
                 <td class="content">
-    
+                    <h1 style="text-align: center;">${eventName}</h1>
                     <h1>Your Booking Has Been Rejected ❌</h1>
     
                     <p>Hello <strong>${name}</strong>,</p>

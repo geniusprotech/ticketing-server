@@ -45,7 +45,7 @@ async function main() {
     const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".split("");
 
     const seatsData = [];
-    const ticketImage = "https://assets.genmedik.com/supports/images/logo-medica.png";
+    const ticketImage = "https://assets.genmedik.com/tix/tickets";
 
     for (let row = 0; row < rows; row++) {
         const rowLabel = alphabet[row];
@@ -81,7 +81,10 @@ async function main() {
 
     // Fetch all created seats
     const allSeats = await prisma.seat.findMany({
-        select: { id: true }
+        select: { 
+            id: true,
+            seatNumber: true,
+        }
     });
 
     console.log(`Preparing ${allSeats.length} tickets...`);
@@ -89,7 +92,7 @@ async function main() {
     // Build ticket rows
     const ticketsData = allSeats.map(seat => ({
         seatId: seat.id,
-        ticketFile: ticketImage,
+        ticketFile: `${ticketImage}/${seat.seatNumber}.png`,
     }));
 
     // Insert tickets
