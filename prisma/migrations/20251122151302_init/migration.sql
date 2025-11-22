@@ -59,6 +59,7 @@ CREATE TABLE "bookings" (
     "user_id" TEXT NOT NULL,
     "seat_ids" TEXT[],
     "transfer_receipt" TEXT,
+    "exported" BOOLEAN NOT NULL DEFAULT false,
     "status" "BookingStatus" NOT NULL DEFAULT 'PENDING',
     "created_at" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updated_at" TIMESTAMP(3) NOT NULL,

@@ -86,6 +86,7 @@ model Booking {
   user            User          @relation(fields: [userId], references: [id])
   seatIds         String[]      @map("seat_ids")
   transferReceipt String?       @map("transfer_receipt")
+  exported        Boolean       @default(false)
   status          BookingStatus @default(PENDING)
   seats           Seat[]
   tickets         Ticket[]
