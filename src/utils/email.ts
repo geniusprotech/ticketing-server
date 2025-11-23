@@ -32,6 +32,7 @@ export const emailTemplates = {
       
           .header { padding: 24px; text-align: center; background: linear-gradient(90deg,#0f172a 0%, #1e3a8a 100%); color: #fff; }
           .logo { width: 140px; margin: 0 auto; }
+          .logo-event { width: 100%; margin: 0 auto; }
       
           .content { padding: 28px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto; color: #111827; line-height: 1.5; }
       
@@ -76,7 +77,7 @@ export const emailTemplates = {
       
               <tr>
                   <td class="content">
-                  <h1 style="text-align: center;">${eventName}</h1>
+                  <img src="https://assets.genmedik.com/supports/images/logo-email-event.jpeg" alt="Logo" class="logo-event">
                   <h1>Thank You for Your Ticket Purchase 🎉</h1>
       
                   <p>Hello <strong>${name}</strong>,</p>
@@ -175,6 +176,7 @@ export const emailTemplates = {
     
         .header { padding: 24px; text-align: center; background: linear-gradient(90deg,#0f172a 0%, #1e3a8a 100%); color: #fff; }
         .logo { width: 140px; margin: 0 auto; }
+        .logo-event { width: 100%; margin: 0 auto; }
     
         .content { padding: 28px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto; color: #111827; line-height: 1.5; }
     
@@ -221,7 +223,7 @@ export const emailTemplates = {
             <!-- Content -->
             <tr>
                 <td class="content">
-                    <h1 style="text-align: center;">${eventName}</h1>
+                    <img src="https://assets.genmedik.com/supports/images/logo-email-event.jpeg" alt="Logo" class="logo-event">
                     <h1>Your Payment Has Been Verified 🎉</h1>
     
                     <p>Hello <strong>${name}</strong>,</p>
@@ -312,6 +314,7 @@ export const emailTemplates = {
     
         .header { padding: 24px; text-align: center; background: linear-gradient(90deg,#7f1d1d 0%, #dc2626 100%); color: #fff; }
         .logo { width: 140px; margin: 0 auto; }
+        .logo-event { width: 100%; margin: 0 auto; }
     
         .content { padding: 28px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto; color: #111827; line-height: 1.5; }
     
@@ -349,7 +352,7 @@ export const emailTemplates = {
             <!-- Content -->
             <tr>
                 <td class="content">
-                    <h1 style="text-align: center;">${eventName}</h1>
+                    <img src="https://assets.genmedik.com/supports/images/logo-email-event.jpeg" alt="Logo" class="logo-event">
                     <h1>Your Booking Has Been Rejected ❌</h1>
     
                     <p>Hello <strong>${name}</strong>,</p>
