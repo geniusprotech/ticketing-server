@@ -104,7 +104,7 @@ export const emailTemplates = {
                   <!-- CTA -->
                   <div class="btn-wrap">
                       <a href="${bookingUrl}" class="btn" target="_blank" rel="noopener">
-                          View Booking Details
+                          Upload Transfer Slip
                       </a>
                   </div>
       
@@ -136,8 +136,6 @@ export const emailTemplates = {
       
                       <div style="margin-top:14px; font-size:12px;">
                           © ${new Date().getFullYear()} Event Organizer. All rights reserved.<br>
-                          <!-- Added phone support in footer -->
-                          Support Phone: ${supports.phone}
                       </div>
       
                   </td>

@@ -7,7 +7,10 @@ export function authenticationService(fastify: FastifyInstance) {
         try {
             const user = await fastify.prisma.user.findFirst({
                 where: {
-                    email: payload.email,
+                    email: {
+                        equals: payload.email,
+                        mode: 'insensitive',
+                    },
                 },
                 select: {
                     id: true,
