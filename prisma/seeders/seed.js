@@ -59,7 +59,9 @@ async function main() {
             };
 
             // BOOKED seat logic
-            if (['A', 'B'].includes(rowLabel) && (col > 7 && col < 22)) {
+            if (['A', 'I', 'J'].includes(rowLabel) && (col > 7 && col < 22)) {
+                seat.status = 'BOOKED';
+            } else if (['B'].includes(rowLabel) && (col > 14 && col < 22)) {
                 seat.status = 'BOOKED';
             } else if (!['A', 'B'].includes(rowLabel) && col < 8) {
                 seat.status = 'BOOKED';
