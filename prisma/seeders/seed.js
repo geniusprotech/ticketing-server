@@ -33,7 +33,7 @@ async function main() {
             date: moment('2025-12-06T02:00:00').toISOString(),
             location: `SAINT JOHN'S SCHOOL - GK, Function Hall - 5th Floor`,
             slug: 'nusantara-berdendang',
-            price: 20000
+            price: 25000
         },
         select: { id: true }
     });
