@@ -3,6 +3,7 @@ import axios from "axios";
 import { BookTicketDTO, GetBookingListDTO } from "../models";
 import { BookingStatus, SeatStatus } from "@prisma/client";
 import { paginate } from "@/utils";
+import moment from "moment";
 
 export function bookingService(fastify: FastifyInstance) {
     const reserveSeats = async (prismaClient: any, userId: string, eventId: string, seatNumbers: any[]) => {
@@ -480,6 +481,46 @@ export function bookingService(fastify: FastifyInstance) {
         }
     }
 
+    const sendBulkEmailInvitedGuest = async (payload: any, slug: string) => {
+        try {
+            const event = await fastify.prisma.event.findFirst({
+                where: {
+                    slug,
+                },
+            });
+
+            if (!event) throw ({ statusCode: 404, message: 'Event not found' });
+
+            for (const guest of payload) {
+                fastify.mailer.sendTemplate(
+                    'invitedGuest',
+                    {
+                        eventName: event?.title,
+                        seats: guest.seats.map((seat: any) => ({
+                            seatId: seat,
+                            seatUrl: `${fastify.config.CF_PUBLIC_DOMAIN}/tix/tickets/${seat.toUpperCase()}.png`,
+                        })),
+                        name: guest.name,
+                        location: event?.location,
+                        time: moment(event?.date).format('DD MMM YYYY, HH:mm'),
+                        supports: {
+                            phone: '+62 822 2920 7974 / +62 812 1177 9742',
+                            email: 'claudiagustarini@saintjohn.sch.id',
+                            linkedInUrl: fastify.config.URL_LINKEDIN,
+                            instagramUrl: fastify.config.URL_IG,
+                        }
+                    },
+                    {
+                        from: "no-reply@geniusprotech.com",
+                        to: guest.email,
+                        subject: "Invited to Event",
+                    });
+            }
+        } catch (error: any) {
+            throw (await fastify.errorValidation.validationError(error));
+        }
+    }
+
     return {
         bookSeat,
         updateTransferBooking,
@@ -490,5 +531,6 @@ export function bookingService(fastify: FastifyInstance) {
         getProxyImage,
         sendBulkEmailBooking,
         sendBulkEmailBookingPending,
+        sendBulkEmailInvitedGuest,
     }
 }

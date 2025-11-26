@@ -406,5 +406,150 @@ export const emailTemplates = {
     </div>
     </body>
     </html>
-    `
+    `,
+    invitedGuest: ({
+        eventName,
+        name,
+        time,
+        location,
+        seats,
+        supports
+    }: {
+        eventName: string;
+        name: string;
+        time: string;
+        location: string;
+        seats: { seatId: string; seatUrl: string }[];
+        supports: { linkedInUrl: string; instagramUrl: string; email: string; phone: string };
+    }) => `
+    <!doctype html>
+    <html lang="en">
+    <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1">
+    <title>You Are Invited – Event Information</title>
+    <style>
+        img { border: 0; display: block; max-width: 100%; }
+        a { color: inherit; text-decoration: none; }
+        body { margin: 0; padding: 0; background-color: #f4f6fb; }
+        table { border-spacing: 0; }
+        td { padding: 0; }
+
+        .wrapper { width: 100%; background-color: #f4f6fb; padding-bottom: 40px; }
+        .main { background-color: #ffffff; margin: 0 auto; max-width: 640px; border-radius: 8px; overflow: hidden; }
+
+        .header { padding: 24px; text-align: center; background: linear-gradient(90deg,#0f172a 0%, #1e3a8a 100%); color: #fff; }
+        .logo { width: 140px; margin: 0 auto; }
+        .logo-event { width: 100%; margin: 0 auto; }
+
+        .content { padding: 28px; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto; color: #111827; line-height: 1.5; }
+
+        h1 { margin: 0 0 12px; font-size: 22px; font-weight: 700; color: #0f172a; }
+        p { margin: 0 0 16px; font-size: 15px; color: #374151; }
+
+        .ticket-box {
+            background: #f9fafb;
+            padding: 16px;
+            border-radius: 8px;
+            margin-bottom: 14px;
+            border: 1px solid #e5e7eb;
+            font-size: 15px;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 10px 16px;
+            border-radius: 8px;
+            background-color: #0f172a;
+            color: #ffffff !important;
+            font-weight: 600;
+            font-size: 14px;
+            margin-top: 6px;
+        }
+
+        .footer { padding: 20px 24px; text-align: center; font-size: 13px; color: #9ca3af; }
+        .socials { margin-top: 12px; }
+        .social-icon { display: inline-block; width: 36px; height: 36px; margin: 0 6px; }
+    </style>
+    </head>
+
+    <body>
+    <div class="wrapper">
+        <table class="main" width="100%" cellpadding="0" cellspacing="0" role="presentation">
+
+            <!-- Header -->
+            <tr>
+                <td class="header">
+                    <img src="https://assets.genmedik.com/supports/images/white-logo.png" alt="Logo" class="logo">
+                </td>
+            </tr>
+
+            <!-- Content -->
+            <tr>
+                <td class="content">
+                    <img src="https://assets.genmedik.com/supports/images/logo-email-event.jpeg" alt="Logo" class="logo-event">
+                    <h1>You’re Officially Invited 🎉</h1>
+
+                    <p>Hello <strong>${name}</strong>,</p>
+
+                    <p>
+                        You are invited to attend <strong>${eventName}</strong> as our honorable guest.
+                    </p>
+
+                    <p>
+                        Here are your event details:
+                    </p>
+
+                    <div class="ticket-box">
+                        <strong>📍 Location:</strong><br> ${location}<br><br>
+                        <strong>⏰ Time:</strong><br> ${time}
+                    </div>
+
+                    <p>
+                        Below is your seat assignment.  
+                        You can click the seat number to see more details.
+                    </p>
+
+                    ${seats.map(s => `
+                        <div class="ticket-box">
+                            <strong>Seat Number:</strong> ${s.seatId}<br>
+                            <a class="btn" href="${s.seatUrl}" target="_blank">View Seat Details</a>
+                        </div>
+                    `).join('')}
+
+                    <p style="font-size:13px; color:#6b7280;">
+                        If you need help, feel free to contact us:<br>
+                        <strong>Email:</strong> <a href="mailto:${supports.email}">${supports.email}</a><br>
+                        <strong>Phone:</strong> ${supports.phone}
+                    </p>
+                </td>
+            </tr>
+
+            <!-- Footer -->
+            <tr>
+                <td class="footer">
+                    <div>We’re excited to see you at the event! 🎶<br>
+                    <strong>Event Committee</strong></div>
+
+                    <div class="socials">
+                        <a href="${supports.linkedInUrl}" target="_blank">
+                            <img class="social-icon" src="https://assets.genmedik.com/supports/images/social-media-lindkedin.png" alt="LinkedIn">
+                        </a>
+
+                        <a href="${supports.instagramUrl}" target="_blank">
+                            <img class="social-icon" src="https://assets.genmedik.com/supports/images/social-media-instagram.png" alt="Instagram">
+                        </a>
+                    </div>
+
+                    <div style="margin-top:14px; font-size:12px;">
+                        © ${new Date().getFullYear()} Genius Project Technology. All rights reserved.<br>
+                    </div>
+                </td>
+            </tr>
+
+        </table>
+    </div>
+    </body>
+    </html>
+    `,
 };
