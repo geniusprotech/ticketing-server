@@ -1,4 +1,5 @@
 import { FastifyInstance } from "fastify"
+import axios from "axios";
 import { BookTicketDTO, GetBookingListDTO } from "../models";
 import { BookingStatus, SeatStatus } from "@prisma/client";
 import { paginate } from "@/utils";
@@ -313,9 +314,9 @@ export function bookingService(fastify: FastifyInstance) {
     }
 
     const getListBooking = async (req: GetBookingListDTO & { role: string }) => {
-        
+
         try {
-            if(req.role !== 'admin') throw({ statusCode: 403, mesage: 'Not Authorized! '});
+            if (req.role !== 'admin') throw ({ statusCode: 403, mesage: 'Not Authorized! ' });
 
             const filter: any = {
                 code: {
@@ -356,7 +357,7 @@ export function bookingService(fastify: FastifyInstance) {
     }
 
     const updateExportedEvidence = (bookingIds: string[], role: string) => {
-        if(role !== 'admin') throw({ statusCode: 403, mesage: 'Not Authorized! '});
+        if (role !== 'admin') throw ({ statusCode: 403, mesage: 'Not Authorized! ' });
 
         return fastify.prisma.booking.updateMany({
             where: {
@@ -370,6 +371,66 @@ export function bookingService(fastify: FastifyInstance) {
         });
     }
 
+    const getProxyImage = async (imageUrl: string) => {
+        try {
+            const response = await axios.get(imageUrl, {
+                responseType: 'arraybuffer'
+            });
+
+            return {
+                data: response.data,
+                contentType: response.headers['content-type']
+            };
+        } catch (error: any) {
+            throw (await fastify.errorValidation.validationError(error));
+        }
+    }
+
+    const sendBulkEmailBooking = async () => {
+        try {
+            const bookings = await fastify.prisma.booking.findMany({
+                where: {
+                    status: BookingStatus.APPROVED,
+                },
+                include: {
+                    event: true,
+                    user: true,
+                    seats: {
+                        include: {
+                            ticket: true
+                        },
+                    },
+                },
+            });
+
+            for (const booking of bookings) {
+                fastify.mailer.sendTemplate(
+                    'paymentConfirmed',
+                    {
+                        eventName: booking?.event?.title,
+                        name: booking?.user?.name,
+                        tickets: booking.seats.map((seat: any) => ({
+                            seatId: seat.seatNumber,
+                            ticketUrl: seat.ticket.ticketFile,
+                        })),
+                        supports: {
+                            phone: '+62 822 2920 7974 / +62 812 1177 9742',
+                            email: 'claudiagustarini@saintjohn.sch.id',
+                            linkedInUrl: fastify.config.URL_LINKEDIN,
+                            instagramUrl: fastify.config.URL_IG,
+                        }
+                    },
+                    {
+                        from: "no-reply@geniusprotech.com",
+                        to: booking?.user?.email,
+                        subject: "Payment Verified",
+                    });
+            }
+        } catch (error: any) {
+            throw (await fastify.errorValidation.validationError(error));
+        }
+    }
+
     return {
         bookSeat,
         updateTransferBooking,
@@ -377,5 +438,7 @@ export function bookingService(fastify: FastifyInstance) {
         updateBookingStatus,
         getListBooking,
         updateExportedEvidence,
+        getProxyImage,
+        sendBulkEmailBooking,
     }
 }

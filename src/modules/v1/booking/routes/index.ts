@@ -8,7 +8,9 @@ export default async function bookingRoutes(fastify: FastifyInstance) {
     const middleware = readCookieMiddleware(fastify);
 
     fastify.get('/dashboard', { preHandler: [middleware.verifySession, validateData(getBookingListSchema)] }, controller.getListBooking);
+    fastify.get('/image-proxy', { preHandler: [middleware.verifySession] }, controller.getImageProxy);
     fastify.get('/', { preHandler: [middleware.verifySession] }, controller.getBookingPublicList);
+    fastify.post('/send-bulk-email', { preHandler: [middleware.verifySession] }, controller.sendBulkEmailBooking);
     fastify.post('/', { preHandler: [validateData(bookTicketSchema)] }, controller.bookSeats);
     fastify.put('/export', { preHandler: [middleware.verifySession] }, controller.updateExportedBooking);
     fastify.put<{ Params: { id: string } }>('/status/:id', { preHandler: [middleware.verifySession] }, controller.updateBookingStatus);
