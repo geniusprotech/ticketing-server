@@ -431,6 +431,55 @@ export function bookingService(fastify: FastifyInstance) {
         }
     }
 
+    const sendBulkEmailBookingPending = async () => {
+        try {
+            const bookings = await fastify.prisma.booking.findMany({
+                where: {
+                    status: BookingStatus.PENDING,
+                    transferReceipt: null,
+                },
+                include: {
+                    event: true,
+                    user: true,
+                    seats: {
+                        include: {
+                            ticket: true
+                        },
+                    },
+                },
+            });
+
+            for (const booking of bookings) {
+                fastify.mailer.sendTemplate(
+                    'ticketPurchase',
+                    {
+                        eventName: booking?.event?.title,
+                        name: booking?.user?.name,
+                        seatId: booking.seats.map((seat: any) => seat.seatNumber),
+                        bookingUrl: `${fastify.config.BASE_URL}/events/booking`,
+                        payment: {
+                            bankName: 'BCA',
+                            accountName: 'YAY YOHANES JAKARTA',
+                            accountNumber: '3703009804'
+                        },
+                        supports: {
+                            phone: '+62 822 2920 7974 / +62 812 1177 9742',
+                            email: 'claudiagustarini@saintjohn.sch.id',
+                            linkedInUrl: fastify.config.URL_LINKEDIN,
+                            instagramUrl: fastify.config.URL_IG,
+                        }
+                    },
+                    {
+                        from: "no-reply@geniusprotech.com",
+                        to: booking?.user?.email,
+                        subject: "Thank you for purchasing",
+                    });
+            }
+        } catch (error: any) {
+            throw (await fastify.errorValidation.validationError(error));
+        }
+    }
+
     return {
         bookSeat,
         updateTransferBooking,
@@ -440,5 +489,6 @@ export function bookingService(fastify: FastifyInstance) {
         updateExportedEvidence,
         getProxyImage,
         sendBulkEmailBooking,
+        sendBulkEmailBookingPending,
     }
 }

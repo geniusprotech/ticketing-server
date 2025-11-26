@@ -102,6 +102,16 @@ export function bookingController(fastify: FastifyInstance) {
         }
     }
 
+    const sendBulkEmailBookingPending = async (req: FastifyRequest, res: FastifyReply) => {
+        try {
+            const events = await service.sendBulkEmailBookingPending();
+
+            res.success(200, events, 'Send bulk email booking pending successfully!');
+        } catch (err: any) {
+            res.error(err.message, err?.code || 500);
+        }
+    }
+
     return {
         bookSeats,
         updateBookingStatus,
@@ -111,5 +121,6 @@ export function bookingController(fastify: FastifyInstance) {
         updateExportedBooking,
         getImageProxy,
         sendBulkEmailBooking,
+        sendBulkEmailBookingPending,
     }
 }
