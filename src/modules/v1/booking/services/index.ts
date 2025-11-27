@@ -502,7 +502,7 @@ export function bookingService(fastify: FastifyInstance) {
                         })),
                         name: guest.name,
                         location: event?.location,
-                        time: moment(event?.date).format('DD MMM YYYY, HH:mm'),
+                        time: moment(event?.date).add(7, 'h').format('DD MMM YYYY, HH:mm'),
                         supports: {
                             phone: '+62 822 2920 7974 / +62 812 1177 9742',
                             email: 'claudiagustarini@saintjohn.sch.id',
