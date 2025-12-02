@@ -521,6 +521,47 @@ export function bookingService(fastify: FastifyInstance) {
         }
     }
 
+    const sendBulkEmailVvipGuest = async (payload: any, slug: string) => {
+        try {
+            const event = await fastify.prisma.event.findFirst({
+                where: {
+                    slug,
+                },
+            });
+
+            if (!event) throw ({ statusCode: 404, message: 'Event not found' });
+
+            for (const guest of payload) {
+                fastify.mailer.sendTemplate(
+                    'vvipGuest',
+                    {
+                        eventName: event?.title,
+                        seats: guest.seats.map((seat: any) => ({
+                            seatId: seat,
+                            seatUrl: `${fastify.config.CF_PUBLIC_DOMAIN}/tix/tickets/${seat.toUpperCase()}.png`,
+                        })),
+                        name: guest.name,
+                        location: event?.location,
+                        date: moment(event?.date).add(7, 'h').format('DD MMM YYYY'),
+                        time: moment(event?.date).add(7, 'h').format('HH:mm'),
+                        supports: {
+                            phone: '+62 822 2920 7974 / +62 812 1177 9742',
+                            email: 'claudiagustarini@saintjohn.sch.id',
+                            linkedInUrl: fastify.config.URL_LINKEDIN,
+                            instagramUrl: fastify.config.URL_IG,
+                        }
+                    },
+                    {
+                        from: "no-reply@geniusprotech.com",
+                        to: guest.email,
+                        subject: "Invited to Event",
+                    });
+            }
+        } catch (error: any) {
+            throw (await fastify.errorValidation.validationError(error));
+        }
+    }
+
     return {
         bookSeat,
         updateTransferBooking,
@@ -532,5 +573,6 @@ export function bookingService(fastify: FastifyInstance) {
         sendBulkEmailBooking,
         sendBulkEmailBookingPending,
         sendBulkEmailInvitedGuest,
+        sendBulkEmailVvipGuest,
     }
 }

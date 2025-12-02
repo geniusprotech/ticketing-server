@@ -125,6 +125,19 @@ export function bookingController(fastify: FastifyInstance) {
         }
     }
 
+    const sendBulkEmailBookingVvipGuest = async (req: FastifyRequest<{ Params: { slug: string } }>, res: FastifyReply) => {
+        const payload = req.body as { name: string, email: string, seats: string[] }[];
+        const slug = req.params.slug;
+
+        try {
+            const events = await service.sendBulkEmailVvipGuest(payload, slug);
+
+            res.success(200, events, 'Send bulk email booking vvip guest successfully!');
+        } catch (err: any) {
+            res.error(err.message, err?.code || 500);
+        }
+    }
+
     return {
         bookSeats,
         updateBookingStatus,
@@ -136,5 +149,6 @@ export function bookingController(fastify: FastifyInstance) {
         sendBulkEmailBooking,
         sendBulkEmailBookingPending,
         sendBulkEmailBookingInvitedGuest,
+        sendBulkEmailBookingVvipGuest,
     }
 }

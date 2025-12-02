@@ -13,6 +13,7 @@ export default async function bookingRoutes(fastify: FastifyInstance) {
     fastify.post('/send-bulk-email', { preHandler: [middleware.verifySession] }, controller.sendBulkEmailBooking);
     fastify.post('/send-bulk-email-pending', { preHandler: [middleware.verifySession] }, controller.sendBulkEmailBookingPending);
     fastify.post<{ Params: { slug: string } }>(`/send-bulk-email-invited-guest/:slug`, { preHandler: [middleware.verifySession] }, controller.sendBulkEmailBookingInvitedGuest);
+    fastify.post<{ Params: { slug: string } }>(`/send-bulk-email-vvip-guest/:slug`, { preHandler: [middleware.verifySession] }, controller.sendBulkEmailBookingVvipGuest);
     fastify.post('/', { preHandler: [validateData(bookTicketSchema)] }, controller.bookSeats);
     fastify.put('/export', { preHandler: [middleware.verifySession] }, controller.updateExportedBooking);
     fastify.put<{ Params: { id: string } }>('/status/:id', { preHandler: [middleware.verifySession] }, controller.updateBookingStatus);
