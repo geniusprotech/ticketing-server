@@ -562,6 +562,65 @@ export function bookingService(fastify: FastifyInstance) {
         }
     }
 
+    const sendRemiderGuest = async () => {
+        try {
+            const bookings = await fastify.prisma.booking.findMany({
+                where: {
+                    status: BookingStatus.APPROVED,
+                },
+                include: {
+                    user: true,
+                    event: true,
+                },
+            });
+
+            const event = {
+                location: bookings[0].event.location,
+                title: bookings[0].event.title,
+                date: bookings[0].event.date,
+
+            }
+
+            const emailUser: any[] = Object.values(
+                bookings.reduce((acc: any, item: any) => {
+                    const key = item.user.email;
+                    if (!key) return acc; // skip jika email kosong
+                    if (!acc[key]) {
+                        acc[key] = { name: item.user.name, email: item.user.email };
+                    }
+                    return acc;
+                }, {})
+            );
+
+            for (const guest of emailUser) {
+                fastify.mailer.sendTemplate(
+                    'reminderGuest',
+                    {
+                        eventName: event?.title,
+                        name: guest.name,
+                        location: event?.location,
+                        date: moment(event?.date).add(7, 'h').format('DD MMM YYYY'),
+                        time: moment(event?.date).add(7, 'h').format('HH:mm'),
+                        supports: {
+                            phone: '+62 822 2920 7974 / +62 812 1177 9742',
+                            email: 'claudiagustarini@saintjohn.sch.id',
+                            linkedInUrl: fastify.config.URL_LINKEDIN,
+                            instagramUrl: fastify.config.URL_IG,
+                        }
+                    },
+                    {
+                        from: "no-reply@geniusprotech.com",
+                        to: guest.email,
+                        subject: `Reminder Event - ${event?.title}`,
+                    });
+            }
+
+            return emailUser;
+        } catch (error: any) {
+            throw (await fastify.errorValidation.validationError(error));
+        }
+    }
+
     return {
         bookSeat,
         updateTransferBooking,
@@ -574,5 +633,6 @@ export function bookingService(fastify: FastifyInstance) {
         sendBulkEmailBookingPending,
         sendBulkEmailInvitedGuest,
         sendBulkEmailVvipGuest,
+        sendRemiderGuest,
     }
 }

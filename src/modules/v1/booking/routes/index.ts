@@ -11,6 +11,7 @@ export default async function bookingRoutes(fastify: FastifyInstance) {
     fastify.get('/image-proxy', { preHandler: [middleware.verifySession] }, controller.getImageProxy);
     fastify.get('/', { preHandler: [middleware.verifySession] }, controller.getBookingPublicList);
     fastify.post('/send-bulk-email', { preHandler: [middleware.verifySession] }, controller.sendBulkEmailBooking);
+    fastify.post('/send-reminder-guest', { preHandler: [middleware.verifySession] }, controller.sendReminderBooking);
     fastify.post('/send-bulk-email-pending', { preHandler: [middleware.verifySession] }, controller.sendBulkEmailBookingPending);
     fastify.post<{ Params: { slug: string } }>(`/send-bulk-email-invited-guest/:slug`, { preHandler: [middleware.verifySession] }, controller.sendBulkEmailBookingInvitedGuest);
     fastify.post<{ Params: { slug: string } }>(`/send-bulk-email-vvip-guest/:slug`, { preHandler: [middleware.verifySession] }, controller.sendBulkEmailBookingVvipGuest);

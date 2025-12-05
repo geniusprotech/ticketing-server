@@ -138,6 +138,16 @@ export function bookingController(fastify: FastifyInstance) {
         }
     }
 
+    const sendReminderBooking = async (req: FastifyRequest, res: FastifyReply) => {
+        try {
+            const events = await service.sendRemiderGuest();
+
+            res.success(200, events, 'Send reminder booking successfully!');
+        } catch (err: any) {
+            res.error(err.message, err?.code || 500);
+        }
+    }
+
     return {
         bookSeats,
         updateBookingStatus,
@@ -150,5 +160,6 @@ export function bookingController(fastify: FastifyInstance) {
         sendBulkEmailBookingPending,
         sendBulkEmailBookingInvitedGuest,
         sendBulkEmailBookingVvipGuest,
+        sendReminderBooking,
     }
 }
